@@ -1,0 +1,9 @@
+# Uncomment next line to enable ssh agent forwarding to the named VM
+SSH_VAULT_VM="ssh-vault"
+
+if [ "$SSH_VAULT_VM" != "" ]; then
+	export SSH_SOCK=/tmp/.SSH_AGENT_$SSH_VAULT_VM
+	rm -f "$SSH_SOCK"
+	sudo -u user ncat -k -l -U "$SSH_SOCK" -c "qrexec-client-vm $SSH_VAULT_VM qubes.SshAgent" &
+fi
+
