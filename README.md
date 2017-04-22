@@ -1,16 +1,23 @@
-# ssh-vault
+# Qubes Split SSH
 
 These Qubes scripts allow one to keep ssh private keys in a separate VM (an
-"ssh-vault"), allowing other VMs to use them only after being authorized. It
-does this by using the qrexec framework to connect a local SSH Agent socket from an AppVM to the SSH Agent socket within the ssh-vault VM. The protections for the ssh private key should be similar to running `ssh -A` into the AppVM.
+"ssh-vault"), allowing other VMs to use them only after being authorized. This
+is done by using Qubes's [qrexec
+framework](https://www.qubes-os.org/doc/qrexec2/) to connect a local SSH Agent
+socket from an AppVM to the SSH Agent socket within the ssh-vault VM. The
+protections for the ssh private key should be similar to running `ssh -A` into
+the client AppVM.
 
 This was inspired by the Qubes [Split GPG](https://www.qubes-os.org/doc/split-gpg/).
 
 Other details:
-- This was developed/tested on the Fedora24 template in Qubes 3.2, though might work for other templates.
-- You will be prompted to confirm each request, though like split GPG you won't see what was requested.
-- Assumes ssh keys kept in an AppVM named ssh-vault.
+- This was developed/tested on the Fedora24 template in Qubes 3.2; it might work for other templates
+- You will be prompted to confirm each request, though like split GPG you won't see what was requested
 - Assumes that the ssh-vault template automatically starts ssh-agent
+- One can have an arbitrary number of ssh-vault VMs
+- The scripts by default assumes ssh keys are kept in an AppVM named `ssh-vault`, though this can be changed by modifying $SSH_VAULT_VM in the client scripts.
+- Currently, a single AppVM can only access a single ssh-vault, though this wouldn't be hard to fix
+
 
 **Security note**: While in normal operation, the user will be prompted for
 every use of the key, it is likely possible that a malicious VM could hold onto
@@ -37,8 +44,9 @@ qvm-copy-to-vm fedora-24 qubes.SshAgent
 sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 ```
 - Create the ssh-vault VM (default name is "ssh-vault" in the scripts below)
+    * It's recommended to disable network access for this VM
 
-- Ssh-vault: Create/copy any ssh private keys into that VM.
+- Ssh-vault: Create an ssh private key or copy one in
 
 
 - Client VM: append the contents of rc.local_client to /rw/config/rc.local
