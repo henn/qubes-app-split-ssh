@@ -68,3 +68,5 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 	- Maybe do the above using qvm-service or qubesdb
 
 - To address the security note above, we could use `ssh-add -c` instead of just `ssh-add`, though this would mean the user would have to click "yes" twice per access in the normal case, causing fatigue/accustomization to clicking yes too much.
+
+- Another way to address the above would be to introduce an SSH Agent proxy that only allowed one request per connection. (idea from @marmarek)
