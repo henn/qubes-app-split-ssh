@@ -48,7 +48,7 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 - Ssh-vault: Create an ssh private key or copy one in
     * Add the ssh-add.desktop file into ~user/.config/autostart in the ssh-vault VM
       (you may need to create the .config/autostart directory if it doesn't already exist)
-      Examine the contents of this file and adjust the ssh-add command if desired (e.g
+    * Examine the contents of this file and adjust the ssh-add command if desired (e.g
       you may want to pass a specific SSH key to add to the agent)
 
 - Client VM: append the contents of rc.local_client to /rw/config/rc.local
