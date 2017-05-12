@@ -49,6 +49,7 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 
 - Client VM: append the contents of rc.local_client to /rw/config/rc.local
     * This is what starts the client side of the ssh agent
+    * Examine the contents and set $SSH_VAULT_VM appropriately
     * Be sure rc.local is executable. ie - `chmod +x /rw/config/rc.local`
 
 - Client VM: Append bashrc_client to the client VM's ~/.bashrc
