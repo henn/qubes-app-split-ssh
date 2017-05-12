@@ -46,6 +46,10 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
     * It's recommended to disable network access for this VM
 
 - Ssh-vault: Create an ssh private key or copy one in
+    * Add the ssh-add.desktop file into ~user/.config/autostart in the ssh-vault VM
+      (you may need to create the .config/autostart directory if it doesn't already exist)
+      Examine the contents of this file and adjust the ssh-add command if desired (e.g
+      you may want to pass a specific SSH key to add to the agent)
 
 - Client VM: append the contents of rc.local_client to /rw/config/rc.local
     * This is what starts the client side of the ssh agent
@@ -56,11 +60,7 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
     * This sets the user's $SSH_AUTH_SOCK to the appropriate value
     * Examine the contents and set $SSH_VAULT_VM appropriately
 
-- Every boot, you will need to run "ssh-add" on the ssh-vault VM to add your key(s) into the ssh-agent.
-
 # Todo
-
-- Automate adding an ssh key in the ssh-vault VM
 
 - Convert the client rc.local into a systemd script in the client template, and allow the ssh-vault VM to be set using some well-known file (like /rw/config/ssh-vault)
 	- Maybe do the above using qvm-service or qubesdb
