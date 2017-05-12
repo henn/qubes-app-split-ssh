@@ -11,7 +11,7 @@ the client AppVM.
 This was inspired by the Qubes [Split GPG](https://www.qubes-os.org/doc/split-gpg/).
 
 Other details:
-- This was developed/tested on the Fedora24 template in Qubes 3.2; it might work for other templates
+- This was developed/tested on the Fedora24 template in Qubes 3.2; it might work for other templates (you may need nmap installed on Debian, which provides the ncat utility used both in client and vault VMs)
 - You will be prompted to confirm each request, though like split GPG you won't see what was requested
 - Assumes that the ssh-vault template automatically starts ssh-agent
 - One can have an arbitrary number of ssh-vault VMs
@@ -33,14 +33,13 @@ Copy files from this repo to various destinations (VM is the first argument). Yo
 - Dom0: Copy qubes.SshAgent.policy to dom0's /etc/qubes-rpc/policy/qubes.SshAgent
 
 - Template for Ssh Vault: Copy qubes.SshAgent to /etc/qubes-rpc/qubes.SshAgent in the template image for the Ssh Vault VM.
-    * qubes.SshAgent needs to run at startup in the AppVM that would like to use the key, as it makes the conduit of the ssh agent forwarding
     * This is because /etc is lost on every boot for the vault itself, so it needs to be added to the template
     * Example:
 ```bash
 # From the VM with the git repo
 qvm-copy-to-vm fedora-24 qubes.SshAgent
 
-# On the template (in this case, fedora-24), run:
+# On the ssh-vault's template (in this case, fedora-24), run:
 sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 ```
 - Create the ssh-vault VM (default name is "ssh-vault" in the scripts below)
@@ -48,10 +47,8 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 
 - Ssh-vault: Create an ssh private key or copy one in
 
-
 - Client VM: append the contents of rc.local_client to /rw/config/rc.local
     * This is what starts the client side of the ssh agent
-    * Examine the contents and set $SSH_VAULT_VM appropriately
     * Be sure rc.local is executable. ie - `chmod +x /rw/config/rc.local`
 
 - Client VM: Append bashrc_client to the client VM's ~/.bashrc
