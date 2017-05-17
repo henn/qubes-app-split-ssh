@@ -1,3 +1,55 @@
 #!/bin/sh
 
-ncat -U $SSH_AUTH_SOCK
+# Current time
+NOW=$(date +"%s")
+
+# Set an 'autoaccept' window, similar to QUBES_GPG_AUTOACCEPT
+# in Split GPG setups.
+# 
+# The user will be re-prompted if they have not used the SSH agent
+# since > this time in seconds
+# 
+# Default is to just use the dom0 'ask' policy, but if you set
+# 'allow' policies for the clientVMs that connect, you can set
+# this to > 0 in order to be prompted less often
+# QUBES_SSH_AGENT_AUTOACCEPT=600
+
+if [ ! -z $QUBES_SSH_AGENT_AUTOACCEPT ]; then
+  # Make a run dir
+  sudo mkdir -p /var/run/qubes-ssh-agent
+  sudo chown user:user /var/run/qubes-ssh-agent
+
+  # Touch a stat file
+  touch /var/run/qubes-ssh-agent/${QREXEC_REMOTE_DOMAIN}.stat
+
+  # Last time we connected to the agent?
+  read LASTTIMESTAMP < /var/run/qubes-ssh-agent/${QREXEC_REMOTE_DOMAIN}.stat
+  if [ $? -eq 1 ]; then
+   LASTTIMESTAMP=$(($QUBES_SSH_AGENT_AUTOACCEPT +1 ))
+  fi
+
+  # Compare the two timestamps
+  TIMEDIFF=$(( $NOW - $LASTTIMESTAMP ))
+
+  # If it's been too long, prompt the user
+  if [ $TIMEDIFF -gt $QUBES_SSH_AGENT_AUTOACCEPT ]; then
+    zenity --question --text "Do you wish to allow $QREXEC_REMOTE_DOMAIN to access your SSH agent \
+(now and for the following $QUBES_SSH_AGENT_AUTOACCEPT seconds)?"
+
+    case $? in
+      0) 
+        echo $NOW > /var/run/qubes-ssh-agent/${QREXEC_REMOTE_DOMAIN}.stat
+        ncat -U $SSH_AUTH_SOCK
+        ;; 
+      *)
+        exit 1
+        ;; 
+    esac
+  # Otherwise, proceed as normal
+  else
+    echo $NOW > /var/run/qubes-ssh-agent/${QREXEC_REMOTE_DOMAIN}.stat
+    ncat -U $SSH_AUTH_SOCK
+  fi
+else
+  ncat -U $SSH_AUTH_SOCK
+fi
