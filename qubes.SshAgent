@@ -39,7 +39,6 @@ if [ ! -z $QUBES_SSH_AGENT_AUTOACCEPT ]; then
     case $? in
       0) 
         echo $NOW > /var/run/qubes-ssh-agent/${QREXEC_REMOTE_DOMAIN}.stat
-        ncat -U $SSH_AUTH_SOCK
         ;; 
       *)
         exit 1
@@ -48,8 +47,7 @@ if [ ! -z $QUBES_SSH_AGENT_AUTOACCEPT ]; then
   # Otherwise, proceed as normal
   else
     echo $NOW > /var/run/qubes-ssh-agent/${QREXEC_REMOTE_DOMAIN}.stat
-    ncat -U $SSH_AUTH_SOCK
   fi
-else
-  ncat -U $SSH_AUTH_SOCK
 fi
+
+ncat -U $SSH_AUTH_SOCK
