@@ -3,16 +3,9 @@
 # Current time
 NOW=$(date +"%s")
 
-# Set an 'autoaccept' window, similar to QUBES_GPG_AUTOACCEPT
-# in Split GPG setups.
-# 
-# The user will be re-prompted if they have not used the SSH agent
-# since > this time in seconds
-# 
-# Default is to just use the dom0 'ask' policy, but if you set
-# 'allow' policies for the clientVMs that connect, you can set
-# this to > 0 in order to be prompted less often
-# QUBES_SSH_AGENT_AUTOACCEPT=600
+if [ ! -z $QREXEC_SERVICE_ARGUMENT ]; then
+  QUBES_SSH_AGENT_AUTOACCEPT=$1
+fi
 
 if [ ! -z $QUBES_SSH_AGENT_AUTOACCEPT ]; then
   # Make a run dir

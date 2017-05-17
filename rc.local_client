@@ -1,9 +1,16 @@
 # Uncomment next line to enable ssh agent forwarding to the named VM
 SSH_VAULT_VM="ssh-vault"
+# If you wish to set your client VM's policy to 'allow', you can still
+# be prompted at intervals to approve the connection to SSH agent by
+# setting a value below (like QUBES_GPG_AUTOACCEPT in Split GPG)
+#QUBES_SSH_AGENT_AUTOACCEPT=600
 
 if [ "$SSH_VAULT_VM" != "" ]; then
 	export SSH_SOCK=/tmp/.SSH_AGENT_$SSH_VAULT_VM
 	rm -f "$SSH_SOCK"
-	sudo -u user ncat -k -l -U "$SSH_SOCK" -c "qrexec-client-vm $SSH_VAULT_VM qubes.SshAgent" &
+	if [ -z $QUBES_SSH_AGENT_AUTOACCEPT ]; then
+		sudo -u user ncat -k -l -U "$SSH_SOCK" -c "qrexec-client-vm $SSH_VAULT_VM qubes.SshAgent" &
+	else
+		sudo -u user ncat -k -l -U "$SSH_SOCK" -c "qrexec-client-vm $SSH_VAULT_VM qubes.SshAgent+$QUBES_SSH_AGENT_AUTOACCEPT" &
+	fi
 fi
-
