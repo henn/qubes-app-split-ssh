@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=ssh-add
+Exec=ssh-add
+Type=Application

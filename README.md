@@ -12,10 +12,11 @@ This was inspired by the Qubes [Split GPG](https://www.qubes-os.org/doc/split-gp
 
 Other details:
 - This was developed/tested on the Fedora24 template in Qubes 3.2; it might work for other templates
+    - For AppVMs or ssh-vault VMs based on Debian templates, you may need to install the nmap package in the template to get the ncat utility.
 - You will be prompted to confirm each request, though like split GPG you won't see what was requested
 - Assumes that the ssh-vault template automatically starts ssh-agent
 - One can have an arbitrary number of ssh-vault VMs
-- The scripts by default assumes ssh keys are kept in an AppVM named `ssh-vault`, though this can be changed by modifying $SSH_VAULT_VM in the client scripts.
+- The scripts by default assumes ssh keys are kept in an AppVM named `ssh-vault`, though this can be changed by modifying $SSH_VAULT_VM in the client script.
 - Currently, a single AppVM can only access a single ssh-vault, though this wouldn't be hard to fix
 
 
@@ -33,21 +34,23 @@ Copy files from this repo to various destinations (VM is the first argument). Yo
 - Dom0: Copy qubes.SshAgent.policy to dom0's /etc/qubes-rpc/policy/qubes.SshAgent
 
 - Template for Ssh Vault: Copy qubes.SshAgent to /etc/qubes-rpc/qubes.SshAgent in the template image for the Ssh Vault VM.
-    * qubes.SshAgent needs to run at startup in the AppVM that would like to use the key, as it makes the conduit of the ssh agent forwarding
     * This is because /etc is lost on every boot for the vault itself, so it needs to be added to the template
     * Example:
 ```bash
 # From the VM with the git repo
 qvm-copy-to-vm fedora-24 qubes.SshAgent
 
-# On the template (in this case, fedora-24), run:
+# On the ssh-vault's template (in this case, fedora-24), run:
 sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 ```
 - Create the ssh-vault VM (default name is "ssh-vault" in the scripts below)
-    * It's recommended to disable network access for this VM
+    * It's recommended to disable network access for this VM to protect it.
 
 - Ssh-vault: Create an ssh private key or copy one in
 
+- Ssh-vault: Copy `ssh-add.desktop_ssh_vault` to `~user/.config/autostart/ssh-add.desktop`
+    * You may need to create the .config/autostart directory if it doesn't already exist
+    * Examine the contents of this file and adjust the ssh-add command on the `Exec` line if desired (e.g you may want to pass a specific SSH key to add to the agent)
 
 - Client VM: append the contents of rc.local_client to /rw/config/rc.local
     * This is what starts the client side of the ssh agent
@@ -58,11 +61,7 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
     * This sets the user's $SSH_AUTH_SOCK to the appropriate value
     * Examine the contents and set $SSH_VAULT_VM appropriately
 
-- Every boot, you will need to run "ssh-add" on the ssh-vault VM to add your key(s) into the ssh-agent.
-
 # Todo
-
-- Automate adding an ssh key in the ssh-vault VM
 
 - Convert the client rc.local into a systemd script in the client template, and allow the ssh-vault VM to be set using some well-known file (like /rw/config/ssh-vault)
 	- Maybe do the above using qvm-service or qubesdb
