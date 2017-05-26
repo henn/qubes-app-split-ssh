@@ -66,6 +66,9 @@ sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 - Convert the client rc.local into a systemd script in the client template, and allow the ssh-vault VM to be set using some well-known file (like /rw/config/ssh-vault)
 	- Maybe do the above using qvm-service or qubesdb
 
-- To address the security note above, we could use `ssh-add -c` instead of just `ssh-add`, though this would mean the user would have to click "yes" twice per access in the normal case, causing fatigue/accustomization to clicking yes too much.
+- To address the *Security Note* above, we could use `ssh-add -c` instead of just `ssh-add`, though this would mean the user would have to click "yes" twice per access in the normal case, causing fatigue/accustomization to clicking yes too much.
+    * Note: `ssh-add -c` on the Fedora 24 template seems to be broken
 
 - Another way to address the above would be to introduce an SSH Agent proxy that only allowed one request per connection. (idea from @marmarek)
+
+- (possibly distant future) Figure out a way to display info on what is being signed
