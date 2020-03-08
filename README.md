@@ -41,14 +41,14 @@ Copy files from this repo to various destinations (VM is the first argument). Yo
 qvm-copy-to-vm fedora-24 qubes.SshAgent
 
 # On the ssh-vault's template (in this case, fedora-24), run:
-sudo mv ~user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
+sudo mv /home/user/QubesIncoming/work/qubes.SshAgent /etc/qubes-rpc/
 ```
 - Create the ssh-vault VM (default name is "ssh-vault" in the scripts below)
     * It's recommended to disable network access for this VM to protect it.
 
 - Ssh-vault: Create an ssh private key or copy one in
 
-- Ssh-vault: Copy `ssh-add.desktop_ssh_vault` to `~user/.config/autostart/ssh-add.desktop`
+- Ssh-vault: Copy `ssh-add.desktop_ssh_vault` to `/home/user/.config/autostart/ssh-add.desktop`
     * You may need to create the .config/autostart directory if it doesn't already exist
     * Examine the contents of this file and adjust the ssh-add command on the `Exec` line if desired (e.g you may want to pass a specific SSH key to add to the agent)
 
